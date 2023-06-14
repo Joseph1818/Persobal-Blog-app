@@ -21,13 +21,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 mongoose.connect("mongodb://localhost:27017/blogDB", { useNewUrlParser: true });
-// Posts array
-let posts = [];
 
 app.get("/", function (req, res) {
-  res.render("home", {
-    startingContent: homeStartingContent,
-    posts: posts,
+  Post.find({}, function (err, posts) {
+    res.render("home", {
+      startingContent: homeStartingContent,
+      posts: posts,
+    });
   });
 });
 // postSchema declaration
@@ -56,7 +56,7 @@ app.post("/compose", function (req, res) {
     title: req.body.postTitle,
     content: req.body.postBody,
   });
-  // Saving into the  database 
+  // Saving into the  database
   post.save();
 
   res.redirect("/");
