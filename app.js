@@ -57,23 +57,22 @@ app.post("/compose", function (req, res) {
     content: req.body.postBody,
   });
   // Saving into the  database
-  post.save();
-
-  res.redirect("/");
+  // Addding a function into the save.
+  post.save(function (err) {
+    if (!err) {
+      res.redirect("/");
+    }
+  });
 });
 
-app.get("/posts/:postName", function (req, res) {
-  const requestedTitle = _.lowerCase(req.params.postName);
+app.get("/posts/:postId", function (req, res) {
+  const requestedPostId = req.params.postId;
 
-  posts.forEach(function (post) {
-    const storedTitle = _.lowerCase(post.title);
-
-    if (storedTitle === requestedTitle) {
-      res.render("post", {
-        title: post.title,
-        content: post.content,
-      });
-    }
+  Post.findOne({ _id: requestedPostId }, function (err, post) {
+    res.render("post", {
+      title: post.title,
+      content: post.content,
+    });
   });
 });
 
